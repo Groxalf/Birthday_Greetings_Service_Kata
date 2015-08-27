@@ -5,27 +5,28 @@ import static org.junit.Assert.*;
 import org.junit.*;
 
 import com.dumbster.smtp.*;
+import org.mockito.Mock;
 
 
-public class BirthayServicesShould {
+public class BirthdayServicesShould {
 
-	private static final int port = 9999;
+    private static final int port = 9999;
     private final String host = "localhost";
-	private SimpleSmtpServer mailServer;
+    private SimpleSmtpServer mailServer;
     private String employees = "employee_data.txt";
     private BirthdayService service;
 
     @Before
-	public void setUp() throws Exception {
-		mailServer = SimpleSmtpServer.start(port);
+    public void setUp() throws Exception {
+        mailServer = SimpleSmtpServer.start(port);
         service = new BirthdayService(employees, new MailService(host, port));
     }
 
-	@After
-	public void tearDown() throws Exception {
-		mailServer.stop();
-		Thread.sleep(200);
-	}
+    @After
+    public void tearDown() throws Exception {
+        mailServer.stop();
+        Thread.sleep(200);
+    }
 
     @Test
     public void send_a_greet_message_on_employee_birthday() throws Exception {
@@ -41,7 +42,7 @@ public class BirthayServicesShould {
     }
 
     @Test
-	public void not_send_emails_when_nobodys_birthday() throws Exception {
+    public void not_send_emails_when_nobodys_birthday() throws Exception {
         service.sendGreetings(new XDate("2008/01/01"));
         assertEquals("what? messages?", 0, mailServer.getReceivedEmailSize());
     }
