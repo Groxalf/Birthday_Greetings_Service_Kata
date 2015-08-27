@@ -11,7 +11,9 @@ import org.mockito.Mockito;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.ParseException;
+import java.util.Arrays;
 
 
 public class BirthdayServicesShould {
@@ -25,6 +27,7 @@ public class BirthdayServicesShould {
     @Before
     public void setUp() throws Exception {
         mailServer = SimpleSmtpServer.start(port);
+
         service = new BirthdayService(employees, new MailService(host, port));
     }
 
@@ -56,8 +59,15 @@ public class BirthdayServicesShould {
     @Test
     public void collaborations() throws ParseException, MessagingException, IOException {
         MailService mailService = mock(MailService.class);
-        BirthdayService birthdayService = new BirthdayService(employees, mailService);
+        EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
+        String anyName = "anyName";
+        String anyLastName = "anyLastName";
+        String birthdayDate = "2008/10/08";
+        String anyEmail = "anyEmail";
+        when(employeeRepository.getEmployees()).
+                thenReturn(Arrays.asList(new Employee(anyName, anyLastName, birthdayDate, anyEmail)));
+        BirthdayServiceHelper birthdayService = new BirthdayServiceHelper(employeeRepository, mailService);
         birthdayService.sendGreetings(new XDate("2008/10/08"));
-        verify(mailService).sendMessage(anyString(), anyString(), anyString(), anyString());
+        verify(mailService).sendMessage(anyString(), anyString(), anyString(), matches(anyEmail));
     }
 }
