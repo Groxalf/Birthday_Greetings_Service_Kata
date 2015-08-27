@@ -9,7 +9,7 @@ import com.dumbster.smtp.*;
 
 public class BirthayServicesShould {
 
-	private static final int NONSTANDARD_PORT = 9999;
+	private static final int port = 9999;
     private final String host = "localhost";
 	private SimpleSmtpServer mailServer;
     private String employees = "employee_data.txt";
@@ -17,8 +17,8 @@ public class BirthayServicesShould {
 
     @Before
 	public void setUp() throws Exception {
-		mailServer = SimpleSmtpServer.start(NONSTANDARD_PORT);
-        service = new BirthdayService(employees, host, NONSTANDARD_PORT);
+		mailServer = SimpleSmtpServer.start(port);
+        service = new BirthdayService(employees, new MailService(host, port));
     }
 
 	@After

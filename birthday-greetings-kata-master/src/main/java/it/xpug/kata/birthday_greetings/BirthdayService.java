@@ -17,9 +17,9 @@ public class BirthdayService {
     private final MailService mailService;
     private String employees;
 
-    public BirthdayService(String employees, String hostname, int port) {
+    public BirthdayService(String employees, MailService mailService) {
         this.employees = employees;
-        this.mailService = new MailService(hostname, port);
+        this.mailService = mailService;
     }
 
     public void sendGreetings(XDate xDate) throws IOException, ParseException, AddressException, MessagingException {

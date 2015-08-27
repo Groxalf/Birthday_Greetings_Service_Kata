@@ -9,7 +9,9 @@ import javax.mail.internet.*;
 public class Main {
 
 	public static void main(String[] args) throws AddressException, IOException, ParseException, MessagingException {
-		BirthdayService service = new BirthdayService("employee_data.txt", "localhost", 25);
+        String host = "localhost";
+        int port = 9999;
+        BirthdayService service = new BirthdayService("employee_data.txt", new MailService(host, port));
 		service.sendGreetings(new XDate());
 	}
 
