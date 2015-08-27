@@ -14,14 +14,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class BirthdayService {
+    private final MailService mailService;
     private String employees;
-    private String hostname;
-    private int port;
 
     public BirthdayService(String employees, String hostname, int port) {
         this.employees = employees;
-        this.hostname = hostname;
-        this.port = port;
+        this.mailService = new MailService(hostname, port);
     }
 
     public void sendGreetings(XDate xDate) throws IOException, ParseException, AddressException, MessagingException {
@@ -35,7 +33,7 @@ public class BirthdayService {
                 String recipient = employee.getEmail();
                 String body = "Happy Birthday, dear %NAME%!".replace("%NAME%", employee.getFirstName());
                 String subject = "Happy Birthday!";
-                sendMessage(hostname, port, "sender@here.com", subject, body, recipient);
+                sendMessage(mailService.hostname(), mailService.port(), "sender@here.com", subject, body, recipient);
             }
         }
 
