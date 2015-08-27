@@ -1,11 +1,17 @@
 package it.xpug.kata.birthday_greetings;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.*;
 
 import com.dumbster.smtp.*;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
+import java.text.ParseException;
 
 
 public class BirthdayServicesShould {
@@ -45,5 +51,13 @@ public class BirthdayServicesShould {
     public void not_send_emails_when_nobodys_birthday() throws Exception {
         service.sendGreetings(new XDate("2008/01/01"));
         assertEquals("what? messages?", 0, mailServer.getReceivedEmailSize());
+    }
+
+    @Test
+    public void collaborations() throws ParseException, MessagingException, IOException {
+        MailService mailService = mock(MailService.class);
+        BirthdayService birthdayService = new BirthdayService(employees, mailService);
+        birthdayService.sendGreetings(new XDate("2008/10/08"));
+        verify(mailService).sendMessage(anyString(), anyString(), anyString(), anyString());
     }
 }
