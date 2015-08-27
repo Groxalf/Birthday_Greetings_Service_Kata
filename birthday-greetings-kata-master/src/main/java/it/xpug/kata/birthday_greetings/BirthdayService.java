@@ -7,13 +7,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 public class BirthdayService {
     protected EmployeeRepository employeeRepository;
@@ -32,7 +27,7 @@ public class BirthdayService {
 
     public void sendGreetings(final XDate xDate) throws IOException, ParseException, AddressException, MessagingException {
         for (Employee employee : getEmployees()) {
-            xxx(xDate, employee);
+            sendMessageToEmployee(employee, xDate);
         }
     }
 
@@ -50,7 +45,7 @@ public class BirthdayService {
         return employeesRepository;
     }
 
-    private void xxx(XDate xDate, Employee employee) throws MessagingException {
+    private void sendMessageToEmployee(Employee employee, XDate xDate) throws MessagingException {
         if (employee.isBirthday(xDate)) {
             String recipient = employee.getEmail();
             String body = "Happy Birthday, dear %NAME%!".replace("%NAME%", employee.getFirstName());
