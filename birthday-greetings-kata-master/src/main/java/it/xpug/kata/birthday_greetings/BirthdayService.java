@@ -14,22 +14,43 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class BirthdayService {
+    private String employees;
+    private XDate xDate;
+    private String hostname;
+    private int port;
 
-	public void sendGreetings(String fileName, XDate xDate, String smtpHost, int smtpPort) throws IOException, ParseException, AddressException, MessagingException {
-		BufferedReader in = new BufferedReader(new FileReader(fileName));
-		String str = "";
-		str = in.readLine(); // skip header
-		while ((str = in.readLine()) != null) {
-			String[] employeeData = str.split(", ");
-			Employee employee = new Employee(employeeData[1], employeeData[0], employeeData[2], employeeData[3]);
-			if (employee.isBirthday(xDate)) {
-				String recipient = employee.getEmail();
-				String body = "Happy Birthday, dear %NAME%!".replace("%NAME%", employee.getFirstName());
-				String subject = "Happy Birthday!";
-				sendMessage(smtpHost, smtpPort, "sender@here.com", subject, body, recipient);
-			}
-		}
-	}
+    public BirthdayService() {
+    }
+
+    public BirthdayService(String employees, String hostname, int port) {
+        this.employees = employees;
+        this.hostname = hostname;
+        this.port = port;
+    }
+
+    public void sendGreetings(XDate xDate) throws IOException, ParseException, AddressException, MessagingException {
+        BufferedReader in = new BufferedReader(new FileReader(employees));
+        String str = "";
+        str = in.readLine(); // skip header
+        while ((str = in.readLine()) != null) {
+            String[] employeeData = str.split(", ");
+            Employee employee = new Employee(employeeData[1], employeeData[0], employeeData[2], employeeData[3]);
+            if (employee.isBirthday(xDate)) {
+                String recipient = employee.getEmail();
+                String body = "Happy Birthday, dear %NAME%!".replace("%NAME%", employee.getFirstName());
+                String subject = "Happy Birthday!";
+                sendMessage(hostname, port, "sender@here.com", subject, body, recipient);
+            }
+        }
+
+    }
+
+    public void sendGreetings(String employees, XDate xDate, String hostname, int port) throws IOException, ParseException, AddressException, MessagingException {
+        this.employees = employees;
+        this.hostname = hostname;
+        this.port = port;
+        sendGreetings(xDate);
+    }
 
 	private void sendMessage(String smtpHost, int smtpPort, String sender, String subject, String body, String recipient) throws AddressException, MessagingException {
 		// Create a mail session
