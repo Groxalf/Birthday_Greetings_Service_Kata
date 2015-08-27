@@ -11,15 +11,15 @@ public class BirthayServicesShould {
 
 	private static final int NONSTANDARD_PORT = 9999;
     private final String host = "localhost";
-    private BirthdayService birthdayService;
 	private SimpleSmtpServer mailServer;
     private String employees = "employee_data.txt";
+    private BirthdayService service;
 
     @Before
 	public void setUp() throws Exception {
 		mailServer = SimpleSmtpServer.start(NONSTANDARD_PORT);
-		birthdayService = new BirthdayService();
-	}
+        service = new BirthdayService(employees, host, NONSTANDARD_PORT);
+    }
 
 	@After
 	public void tearDown() throws Exception {
@@ -29,7 +29,6 @@ public class BirthayServicesShould {
 
     @Test
     public void send_a_greet_message_on_employee_birthday() throws Exception {
-        BirthdayService service = new BirthdayService(employees, host, NONSTANDARD_PORT);
         service.sendGreetings(new XDate("2008/10/08"));
         assertEquals("message not sent?", 1, mailServer.getReceivedEmailSize());
         SmtpMessage message = (SmtpMessage) mailServer.getReceivedEmail().next();
@@ -43,7 +42,6 @@ public class BirthayServicesShould {
 
     @Test
 	public void not_send_emails_when_nobodys_birthday() throws Exception {
-        BirthdayService service = new BirthdayService(employees, host, NONSTANDARD_PORT);
         service.sendGreetings(new XDate("2008/01/01"));
         assertEquals("what? messages?", 0, mailServer.getReceivedEmailSize());
     }

@@ -18,9 +18,6 @@ public class BirthdayService {
     private String hostname;
     private int port;
 
-    public BirthdayService() {
-    }
-
     public BirthdayService(String employees, String hostname, int port) {
         this.employees = employees;
         this.hostname = hostname;
@@ -44,14 +41,7 @@ public class BirthdayService {
 
     }
 
-    public void sendGreetings(String employees, XDate xDate, String hostname, int port) throws IOException, ParseException, AddressException, MessagingException {
-        this.employees = employees;
-        this.hostname = hostname;
-        this.port = port;
-        sendGreetings(xDate);
-    }
-
-	private void sendMessage(String smtpHost, int smtpPort, String sender, String subject, String body, String recipient) throws AddressException, MessagingException {
+    private void sendMessage(String smtpHost, int smtpPort, String sender, String subject, String body, String recipient) throws AddressException, MessagingException {
 		// Create a mail session
 		java.util.Properties props = new java.util.Properties();
 		props.put("mail.smtp.host", smtpHost);
