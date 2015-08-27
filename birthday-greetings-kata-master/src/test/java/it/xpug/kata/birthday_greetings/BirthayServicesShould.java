@@ -45,7 +45,6 @@ public class BirthayServicesShould {
 	public void not_send_emails_when_nobodys_birthday() throws Exception {
         BirthdayService service = new BirthdayService(employees, host, NONSTANDARD_PORT);
         service.sendGreetings(new XDate("2008/01/01"));
-
         assertEquals("what? messages?", 0, mailServer.getReceivedEmailSize());
     }
 }

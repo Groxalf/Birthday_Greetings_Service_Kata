@@ -15,7 +15,6 @@ import javax.mail.internet.MimeMessage;
 
 public class BirthdayService {
     private String employees;
-    private XDate xDate;
     private String hostname;
     private int port;
 
