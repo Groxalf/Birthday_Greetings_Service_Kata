@@ -18,14 +18,12 @@ public class BirthdayServicesShould {
     private EmailService emailService;
     private EmployeeRepository employeeRepository;
     private String fakeToday;
-    private String anyEmail;
 
     @Before
     public void setUp() throws Exception {
         emailService = mock(EmailService.class);
         employeeRepository = mock(EmployeeRepository.class);
         fakeToday = "2008/10/08";
-        anyEmail = "anyEmail";
     }
 
     @Test
