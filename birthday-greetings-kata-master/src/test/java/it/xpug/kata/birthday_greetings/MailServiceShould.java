@@ -21,7 +21,7 @@ public class MailServiceShould {
     @Before
     public void setUp() throws Exception {
         mailServer = SimpleSmtpServer.start(port);
-        service = new BirthdayService(employees, new MailService(host, port));
+        service = new BirthdayService(employees, new EmailService(host, port));
     }
 
     @After
@@ -32,9 +32,9 @@ public class MailServiceShould {
 
     @Test
     public void send_an_email() throws Exception {
-        MailService service = new MailService("localhost", 9999);
+        EmailService service = new EmailService("localhost", 9999);
 
-        service.sendMessage("anyEmail", "anySubject", "anyBody", "anyRecipient");
+        service.sendEmail("anyEmail", "anySubject", "anyBody", "anyRecipient");
 
         SmtpMessage message = (SmtpMessage) mailServer.getReceivedEmail().next();
         String recipient = message.getHeaderValues("To")[0];

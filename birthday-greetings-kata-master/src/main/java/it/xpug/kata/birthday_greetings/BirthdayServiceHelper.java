@@ -8,8 +8,8 @@ import java.util.List;
 
 public class BirthdayServiceHelper extends BirthdayService{
 
-    public BirthdayServiceHelper(EmployeeRepository employeeRepository, MailService mailService) {
-        super(employeeRepository, mailService);
+    public BirthdayServiceHelper(EmployeeRepository employeeRepository, EmailService emailService) {
+        super(employeeRepository, emailService);
     }
 
     @Override

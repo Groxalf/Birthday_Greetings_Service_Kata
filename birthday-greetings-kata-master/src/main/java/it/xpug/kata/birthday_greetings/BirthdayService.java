@@ -8,21 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 
 public class BirthdayService {
     protected EmployeeRepository employeeRepository;
-    protected MailService mailService;
+    protected EmailService emailService;
     private String employees;
 
-    public BirthdayService(String employees, MailService mailService) {
+    public BirthdayService(String employees, EmailService emailService) {
         this.employees = employees;
-        this.mailService = mailService;
+        this.emailService = emailService;
     }
 
-    public BirthdayService(EmployeeRepository employeeRepository, MailService mailService) {
+    public BirthdayService(EmployeeRepository employeeRepository, EmailService emailService) {
         this.employeeRepository = employeeRepository;
-        this.mailService = mailService;
+        this.emailService = emailService;
     }
 
     public void sendGreetings(final XDate xDate) throws IOException, ParseException, MessagingException {
@@ -50,7 +49,7 @@ public class BirthdayService {
             String recipient = employee.getEmail();
             String body = "Happy Birthday, dear %NAME%!".replace("%NAME%", employee.getFirstName());
             String subject = "Happy Birthday!";
-            mailService.sendMessage("sender@here.com", subject, body, recipient);
+            emailService.sendEmail("sender@here.com", subject, body, recipient);
         }
     }
 

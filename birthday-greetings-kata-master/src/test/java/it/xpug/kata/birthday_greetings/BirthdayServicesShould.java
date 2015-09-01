@@ -18,14 +18,14 @@ import static org.mockito.Mockito.*;
 
 public class BirthdayServicesShould {
 
-    private MailService mailService;
+    private EmailService emailService;
     private EmployeeRepository employeeRepository;
     private String fakeToday;
     private String anyEmail;
 
     @Before
     public void setUp() throws Exception {
-        mailService = mock(MailService.class);
+        emailService = mock(EmailService.class);
         employeeRepository = mock(EmployeeRepository.class);
         fakeToday = "2008/10/08";
         anyEmail = "anyEmail";
@@ -36,11 +36,11 @@ public class BirthdayServicesShould {
         Employee employeeWithBirthdayToday = employeeWithBirthdayOn(fakeToday);
         when(employeeRepository.getEmployees()).thenReturn(asList(employeeWithBirthdayToday,
                 employeeWithBirthdayOn("2008/11/08")));
-        BirthdayServiceHelper birthdayService = new BirthdayServiceHelper(employeeRepository, mailService);
+        BirthdayServiceHelper birthdayService = new BirthdayServiceHelper(employeeRepository, emailService);
 
         birthdayService.sendGreetings(new XDate(fakeToday));
 
-        verify(mailService, times(1)).sendMessage(anyString(), anyString(), anyString(), matches(anyEmail));
+        verify(emailService, times(1)).sendEmail(anyString(), anyString(), anyString(), matches(anyEmail));
     }
 
     private Employee employeeWithBirthdayOn(String birthday) throws ParseException {

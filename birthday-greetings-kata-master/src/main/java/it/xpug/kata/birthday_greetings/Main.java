@@ -11,7 +11,7 @@ public class Main {
 	public static void main(String[] args) throws AddressException, IOException, ParseException, MessagingException {
         String host = "localhost";
         int port = 9999;
-        BirthdayService service = new BirthdayService("employee_data.txt", new MailService(host, port));
+        BirthdayService service = new BirthdayService("employee_data.txt", new EmailService(host, port));
 		service.sendGreetings(new XDate());
 	}
 
