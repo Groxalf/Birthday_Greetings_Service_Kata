@@ -1,8 +1,5 @@
 package it.xpug.kata.birthday_greetings;
 
-import com.dumbster.smtp.SimpleSmtpServer;
-import com.dumbster.smtp.SmtpMessage;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
