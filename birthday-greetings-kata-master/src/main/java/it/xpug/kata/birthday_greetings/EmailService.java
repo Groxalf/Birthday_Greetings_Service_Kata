@@ -25,19 +25,19 @@ public class EmailService {
         return port;
     }
 
-    public void sendEmail(String senderEmail, String subject, String body, String recipient) throws AddressException, MessagingException {
+    public void sendEmail(Email email) throws AddressException, MessagingException {
         // Create a mail session
         java.util.Properties properties = new java.util.Properties();
         properties.put("mail.smtp.host", hostname);
         properties.put("mail.smtp.port", String.valueOf(port));
         Session session = Session.getInstance(properties);
 
-        // Construct the message
+        // Construct the message TODO: extract method
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(senderEmail));
-        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
-        msg.setSubject(subject);
-        msg.setText(body);
+        msg.setFrom(new InternetAddress(email.sender()));
+        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(email.recipient()));
+        msg.setSubject(email.subject());
+        msg.setText(email.body());
 
         // Send the message
         Transport.send(msg);

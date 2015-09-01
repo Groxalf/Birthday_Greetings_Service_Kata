@@ -30,17 +30,18 @@ public class BirthdayServicesShould {
 
     @Test
     public void send_a_greet_message_on_employee_birthday() throws ParseException, MessagingException, IOException {
-        Employee employeeWithBirthdayToday = employeeWithBirthdayOn(fakeToday);
+        String anyRecipient = "fake@fake.com";
+        Employee employeeWithBirthdayToday = employeeWithBirthdayOn(fakeToday, anyRecipient);
         when(employeeRepository.getEmployees()).thenReturn(asList(employeeWithBirthdayToday,
-                employeeWithBirthdayOn("2008/11/08")));
+                                                                  employeeWithBirthdayOn("2008/11/08", "other@fake.com")));
         BirthdayServiceHelper birthdayService = new BirthdayServiceHelper(employeeRepository, emailService);
 
         birthdayService.sendGreetings(new XDate(fakeToday));
 
-        verify(emailService, times(1)).sendEmail(anyString(), anyString(), anyString(), matches(anyEmail));
+        verify(emailService, times(1)).sendEmail(new TestableEmail("sender@here.com", anyRecipient, "Happy Birthday!", "Happy Birthday, dear anyName!"));
     }
 
-    private Employee employeeWithBirthdayOn(String birthday) throws ParseException {
-        return new Employee("anyName", "anyLastName", birthday, "anyEmail");
+    private Employee employeeWithBirthdayOn(String birthday, String anyRecipient) throws ParseException {
+        return new Employee("anyName", "anyLastName", birthday, anyRecipient);
     }
 }

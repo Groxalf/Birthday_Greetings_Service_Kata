@@ -49,7 +49,7 @@ public class BirthdayService {
             String recipient = employee.getEmail();
             String body = "Happy Birthday, dear %NAME%!".replace("%NAME%", employee.getFirstName());
             String subject = "Happy Birthday!";
-            emailService.sendEmail("sender@here.com", subject, body, recipient);
+            emailService.sendEmail(new Email("sender@here.com", subject, body, recipient));
         }
     }
 

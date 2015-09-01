@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.Normalizer;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -16,11 +18,16 @@ public class MailServiceShould {
     private static final String host = "localhost";
     private SimpleSmtpServer fakeMailServer;
     private EmailService service;
+    private SmtpMessage message;
 
     @Before
     public void setUp() throws Exception {
         fakeMailServer = SimpleSmtpServer.start(port);
         service = new EmailService(host, port);
+    }
+
+    private TestableEmail anyEmail() {
+        return new TestableEmail("anySender", "anyRecipient", "anySubject", "anyBody");
     }
 
     @After
@@ -31,15 +38,19 @@ public class MailServiceShould {
 
     @Test
     public void send_an_email() throws Exception {
-        service.sendEmail("anyEmail", "anySubject", "anyBody", "anyRecipient");
+        service.sendEmail(anyEmail());
+        message = (SmtpMessage) fakeMailServer.getReceivedEmail().next();
 
-        SmtpMessage message = (SmtpMessage) fakeMailServer.getReceivedEmail().next();
-        String recipient = message.getHeaderValues("To")[0];
-        String sender = message.getHeaderValues("From")[0];
         assertThat(fakeMailServer.getReceivedEmailSize(), is(1));
-        assertEquals("anyEmail", sender);
-        assertEquals("anySubject", message.getHeaderValue("Subject"));
-        assertEquals("anyBody", message.getBody());
-        assertEquals("anyRecipient", recipient);
+        Email expectedEmail = anyEmail();
+        assertThat(emailFrom(message), is(expectedEmail));
     }
+
+    private TestableEmail emailFrom(SmtpMessage message) {
+        return new TestableEmail(message.getHeaderValues("From")[0],
+                message.getHeaderValues("To")[0],
+                message.getHeaderValue("Subject"),
+                message.getBody());
+    }
+
 }
