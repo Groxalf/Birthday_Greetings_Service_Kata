@@ -25,7 +25,7 @@ public class BirthdayService {
         this.mailService = mailService;
     }
 
-    public void sendGreetings(final XDate xDate) throws IOException, ParseException, AddressException, MessagingException {
+    public void sendGreetings(final XDate xDate) throws IOException, ParseException, MessagingException {
         for (Employee employee : getEmployees()) {
             sendMessageToEmployee(employee, xDate);
         }

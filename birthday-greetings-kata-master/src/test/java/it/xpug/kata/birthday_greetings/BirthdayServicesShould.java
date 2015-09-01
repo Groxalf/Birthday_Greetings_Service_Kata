@@ -1,22 +1,27 @@
 package it.xpug.kata.birthday_greetings;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import org.junit.*;
-
-import com.dumbster.smtp.*;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import com.dumbster.smtp.SimpleSmtpServer;
+import com.dumbster.smtp.SmtpMessage;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.text.ParseException;
-import java.util.Arrays;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class BirthdayServicesShould {
+
+    private MailService mailService;
+    private EmployeeRepository employeeRepository;
+    private String fakeToday;
+    private String anyEmail;
 
     private static final int port = 9999;
     private final String host = "localhost";
@@ -27,8 +32,12 @@ public class BirthdayServicesShould {
     @Before
     public void setUp() throws Exception {
         mailServer = SimpleSmtpServer.start(port);
-
         service = new BirthdayService(employees, new MailService(host, port));
+
+        mailService = mock(MailService.class);
+        employeeRepository = mock(EmployeeRepository.class);
+        fakeToday = "2008/10/08";
+        anyEmail = "anyEmail";
     }
 
     @After
@@ -38,16 +47,15 @@ public class BirthdayServicesShould {
     }
 
     @Test
-    public void send_a_greet_message_on_employee_birthday() throws Exception {
+    public void send_a_greet_message_on_employee_birthday_integration() throws Exception {
         service.sendGreetings(new XDate("2008/10/08"));
-        assertEquals("message not sent?", 1, mailServer.getReceivedEmailSize());
+        assertThat(mailServer.getReceivedEmailSize(), is(1));
         SmtpMessage message = (SmtpMessage) mailServer.getReceivedEmail().next();
         assertEquals("Happy Birthday, dear John!", message.getBody());
         assertEquals("Happy Birthday!", message.getHeaderValue("Subject"));
         String[] recipients = message.getHeaderValues("To");
         assertEquals(1, recipients.length);
         assertEquals("john.doe@foobar.com", recipients[0].toString());
-
     }
 
     @Test
@@ -57,17 +65,18 @@ public class BirthdayServicesShould {
     }
 
     @Test
-    public void collaborations() throws ParseException, MessagingException, IOException {
-        MailService mailService = mock(MailService.class);
-        EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
-        String anyName = "anyName";
-        String anyLastName = "anyLastName";
-        String birthdayDate = "2008/10/08";
-        String anyEmail = "anyEmail";
-        when(employeeRepository.getEmployees()).
-                thenReturn(Arrays.asList(new Employee(anyName, anyLastName, birthdayDate, anyEmail)));
+    public void send_a_greet_message_on_employee_birthday() throws ParseException, MessagingException, IOException {
+        Employee employeeWithBirthdayToday = employeeWithBirthdayOn(fakeToday);
+        when(employeeRepository.getEmployees()).thenReturn(asList(employeeWithBirthdayToday,
+                employeeWithBirthdayOn("2008/11/08")));
         BirthdayServiceHelper birthdayService = new BirthdayServiceHelper(employeeRepository, mailService);
-        birthdayService.sendGreetings(new XDate("2008/10/08"));
-        verify(mailService).sendMessage(anyString(), anyString(), anyString(), matches(anyEmail));
+
+        birthdayService.sendGreetings(new XDate(fakeToday));
+
+        verify(mailService, times(1)).sendMessage(anyString(), anyString(), anyString(), matches(anyEmail));
+    }
+
+    private Employee employeeWithBirthdayOn(String birthday) throws ParseException {
+        return new Employee("anyName", "anyLastName", birthday, "anyEmail");
     }
 }
