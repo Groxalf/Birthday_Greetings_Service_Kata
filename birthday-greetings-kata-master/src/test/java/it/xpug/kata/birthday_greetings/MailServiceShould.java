@@ -13,33 +13,30 @@ import static org.junit.Assert.assertThat;
 public class MailServiceShould {
 
     private static final int port = 9999;
-    private final String host = "localhost";
-    private SimpleSmtpServer mailServer;
-    private String employees = "employee_data.txt";
-    private BirthdayService service;
+    private static final String host = "localhost";
+    private SimpleSmtpServer fakeMailServer;
+    private EmailService service;
 
     @Before
     public void setUp() throws Exception {
-        mailServer = SimpleSmtpServer.start(port);
-        service = new BirthdayService(employees, new EmailService(host, port));
+        fakeMailServer = SimpleSmtpServer.start(port);
+        service = new EmailService(host, port);
     }
 
     @After
     public void tearDown() throws Exception {
-        mailServer.stop();
+        fakeMailServer.stop();
         Thread.sleep(200);
     }
 
     @Test
     public void send_an_email() throws Exception {
-        EmailService service = new EmailService("localhost", 9999);
-
         service.sendEmail("anyEmail", "anySubject", "anyBody", "anyRecipient");
 
-        SmtpMessage message = (SmtpMessage) mailServer.getReceivedEmail().next();
+        SmtpMessage message = (SmtpMessage) fakeMailServer.getReceivedEmail().next();
         String recipient = message.getHeaderValues("To")[0];
         String sender = message.getHeaderValues("From")[0];
-        assertThat(mailServer.getReceivedEmailSize(), is(1));
+        assertThat(fakeMailServer.getReceivedEmailSize(), is(1));
         assertEquals("anyEmail", sender);
         assertEquals("anySubject", message.getHeaderValue("Subject"));
         assertEquals("anyBody", message.getBody());
