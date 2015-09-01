@@ -31,20 +31,18 @@ public class MailServiceShould {
     }
 
     @Test
-    public void send_a_greet_message_on_employee_birthday() throws Exception {
-        service.sendGreetings(new XDate("2008/10/08"));
-        assertThat(mailServer.getReceivedEmailSize(), is(1));
-        SmtpMessage message = (SmtpMessage) mailServer.getReceivedEmail().next();
-        assertEquals("Happy Birthday, dear John!", message.getBody());
-        assertEquals("Happy Birthday!", message.getHeaderValue("Subject"));
-        String[] recipients = message.getHeaderValues("To");
-        assertEquals(1, recipients.length);
-        assertEquals("john.doe@foobar.com", recipients[0].toString());
-    }
+    public void send_an_email() throws Exception {
+        MailService service = new MailService("localhost", 9999);
 
-    @Test
-    public void not_send_emails_when_nobodys_birthday() throws Exception {
-        service.sendGreetings(new XDate("2008/01/01"));
-        assertEquals("what? messages?", 0, mailServer.getReceivedEmailSize());
+        service.sendMessage("anyEmail", "anySubject", "anyBody", "anyRecipient");
+
+        SmtpMessage message = (SmtpMessage) mailServer.getReceivedEmail().next();
+        String recipient = message.getHeaderValues("To")[0];
+        String sender = message.getHeaderValues("From")[0];
+        assertThat(mailServer.getReceivedEmailSize(), is(1));
+        assertEquals("anyEmail", sender);
+        assertEquals("anySubject", message.getHeaderValue("Subject"));
+        assertEquals("anyBody", message.getBody());
+        assertEquals("anyRecipient", recipient);
     }
 }
